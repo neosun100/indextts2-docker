@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  indextts2:
+    build: .
+    ports:
+      - "7870:7870"
+      - "8002:8002"
+    volumes:
+      - ./checkpoints:/app/checkpoints
+      - ./examples:/app/examples
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped

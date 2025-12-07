@@ -47,6 +47,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda
 
 # For Vietnamese
@@ -55,6 +56,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda-vietnamese
 
 # For Japanese
@@ -63,6 +65,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda-japanese
 
 # Wait 2-3 minutes for service to start

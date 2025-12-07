@@ -47,6 +47,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda
 
 # ベトナム語版
@@ -55,6 +56,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda-vietnamese
 
 # 日本語版
@@ -63,6 +65,7 @@ docker run -d \
   --gpus all \
   -p 8002:8002 \
   -p 7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
   neosun/indextts2:v2.1-cuda-japanese
 
 # サービス起動まで 2-3 分待機

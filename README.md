@@ -136,7 +136,7 @@ services:
 
 | Tag | Features | Performance | Startup | Use Case | Recommended |
 |-----|----------|-------------|---------|----------|-------------|
-| `v2.2-performance-optimized` ⭐ | **Enhanced API** + Tunable params + Speaker cache | **26.6% faster** | ~180s | **Production (Best)** | ✅ **YES** |
+| `v2.2-performance-optimized` ⭐ | **Enhanced API** + Tunable params + Speaker cache + **Health check** | **26.6% faster** | ~180s | **Production (Best)** | ✅ **YES** |
 | `latest` | Same as v2.2 | 26.6% faster | ~180s | Production | ✅ **YES** |
 | `v2.1-cuda` | CUDA kernel optimization | Baseline | ~180s | Chinese content | ⭐⭐⭐ |
 | `v2.0-production` | Stable baseline | Baseline | ~90s | English content | ⭐⭐⭐ |
@@ -147,6 +147,7 @@ services:
 - ✅ **26.6% faster** with tunable parameters
 - ✅ **Enhanced API** with 8 performance parameters
 - ✅ **Speaker cache** system (no re-upload needed)
+- ✅ **Health check** built-in (Docker status: healthy)
 - ✅ **All features** from previous versions
 - ✅ **Production ready** and fully tested
 

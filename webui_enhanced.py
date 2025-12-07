@@ -19,30 +19,37 @@ def synthesize(text, spk_audio, emo_audio, emo_alpha, happy, angry, sad, afraid,
     import os
     import time
     import shutil
+    import traceback
     
-    os.makedirs("/app/outputs", exist_ok=True)
-    timestamp = time.strftime("%Y%m%d_%H%M%S")
-    
-    # 保存上传的说话人音频
-    spk_saved = f"/app/outputs/upload_spk_{timestamp}.wav"
-    shutil.copy(spk_audio, spk_saved)
-    
-    # 保存上传的情感音频（如果有）
-    emo_saved = None
-    if emo_audio:
-        emo_saved = f"/app/outputs/upload_emo_{timestamp}.wav"
-        shutil.copy(emo_audio, emo_saved)
-    
-    # 生成输出音频
-    output_path = f"/app/outputs/tts_{timestamp}.wav"
-    
-    emo_vector = [happy, angry, sad, afraid, disgusted, melancholic, surprised, calm] if any([happy, angry, sad, afraid, disgusted, melancholic, surprised, calm]) else None
-    tts.infer(spk_audio_prompt=spk_saved, text=text, output_path=output_path,
-              emo_audio_prompt=emo_saved if emo_saved else None,
-              emo_alpha=emo_alpha, emo_vector=emo_vector,
-              use_emo_text=use_emo_text, emo_text=emo_text if emo_text else None,
-              use_random=use_random, verbose=True)
-    return output_path
+    try:
+        os.makedirs("/app/outputs", exist_ok=True)
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        
+        # 保存上传的说话人音频
+        spk_saved = f"/app/outputs/upload_spk_{timestamp}.wav"
+        shutil.copy(spk_audio, spk_saved)
+        
+        # 保存上传的情感音频（如果有）
+        emo_saved = None
+        if emo_audio:
+            emo_saved = f"/app/outputs/upload_emo_{timestamp}.wav"
+            shutil.copy(emo_audio, emo_saved)
+        
+        # 生成输出音频
+        output_path = f"/app/outputs/tts_{timestamp}.wav"
+        
+        emo_vector = [happy, angry, sad, afraid, disgusted, melancholic, surprised, calm] if any([happy, angry, sad, afraid, disgusted, melancholic, surprised, calm]) else None
+        tts.infer(spk_audio_prompt=spk_saved, text=text, output_path=output_path,
+                  emo_audio_prompt=emo_saved if emo_saved else None,
+                  emo_alpha=emo_alpha, emo_vector=emo_vector,
+                  use_emo_text=use_emo_text, emo_text=emo_text if emo_text else None,
+                  use_random=use_random, verbose=True)
+        return output_path
+    except Exception as e:
+        error_msg = f"生成失败: {str(e)}\n{traceback.format_exc()}"
+        print(error_msg)
+        gr.Warning(f"生成失败: {str(e)}")
+        return None
 
 with gr.Blocks(title="IndexTTS2 - 情感可控的零样本语音合成") as demo:
     gr.Markdown("""

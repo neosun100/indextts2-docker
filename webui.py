@@ -130,52 +130,59 @@ def gen_single(emo_control_method,prompt, text,
                emo_text,emo_random,
                max_text_tokens_per_segment=120,
                 *args, progress=gr.Progress()):
-    output_path = None
-    if not output_path:
-        output_path = os.path.join("outputs", f"spk_{int(time.time())}.wav")
-    # set gradio progress
-    tts.gr_progress = progress
-    do_sample, top_p, top_k, temperature, \
-        length_penalty, num_beams, repetition_penalty, max_mel_tokens = args
-    kwargs = {
-        "do_sample": bool(do_sample),
-        "top_p": float(top_p),
-        "top_k": int(top_k) if int(top_k) > 0 else None,
-        "temperature": float(temperature),
-        "length_penalty": float(length_penalty),
-        "num_beams": num_beams,
-        "repetition_penalty": float(repetition_penalty),
-        "max_mel_tokens": int(max_mel_tokens),
-        # "typical_sampling": bool(typical_sampling),
-        # "typical_mass": float(typical_mass),
-    }
-    if type(emo_control_method) is not int:
-        emo_control_method = emo_control_method.value
-    if emo_control_method == 0:  # emotion from speaker
-        emo_ref_path = None  # remove external reference audio
-    if emo_control_method == 1:  # emotion from reference audio
-        pass
-    if emo_control_method == 2:  # emotion from custom vectors
-        vec = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, vec8]
-        vec = tts.normalize_emo_vec(vec, apply_bias=True)
-    else:
-        # don't use the emotion vector inputs for the other modes
-        vec = None
+    try:
+        output_path = None
+        if not output_path:
+            output_path = os.path.join("outputs", f"spk_{int(time.time())}.wav")
+        # set gradio progress
+        tts.gr_progress = progress
+        do_sample, top_p, top_k, temperature, \
+            length_penalty, num_beams, repetition_penalty, max_mel_tokens = args
+        kwargs = {
+            "do_sample": bool(do_sample),
+            "top_p": float(top_p),
+            "top_k": int(top_k) if int(top_k) > 0 else None,
+            "temperature": float(temperature),
+            "length_penalty": float(length_penalty),
+            "num_beams": num_beams,
+            "repetition_penalty": float(repetition_penalty),
+            "max_mel_tokens": int(max_mel_tokens),
+            # "typical_sampling": bool(typical_sampling),
+            # "typical_mass": float(typical_mass),
+        }
+        if type(emo_control_method) is not int:
+            emo_control_method = emo_control_method.value
+        if emo_control_method == 0:  # emotion from speaker
+            emo_ref_path = None  # remove external reference audio
+        if emo_control_method == 1:  # emotion from reference audio
+            pass
+        if emo_control_method == 2:  # emotion from custom vectors
+            vec = [vec1, vec2, vec3, vec4, vec5, vec6, vec7, vec8]
+            vec = tts.normalize_emo_vec(vec, apply_bias=True)
+        else:
+            # don't use the emotion vector inputs for the other modes
+            vec = None
 
-    if emo_text == "":
-        # erase empty emotion descriptions; `infer()` will then automatically use the main prompt
-        emo_text = None
+        if emo_text == "":
+            # erase empty emotion descriptions; `infer()` will then automatically use the main prompt
+            emo_text = None
 
-    print(f"Emo control mode:{emo_control_method},weight:{emo_weight},vec:{vec}")
-    output = tts.infer(spk_audio_prompt=prompt, text=text,
-                       output_path=output_path,
-                       emo_audio_prompt=emo_ref_path, emo_alpha=emo_weight,
-                       emo_vector=vec,
-                       use_emo_text=(emo_control_method==3), emo_text=emo_text,use_random=emo_random,
-                       verbose=cmd_args.verbose,
-                       max_text_tokens_per_segment=int(max_text_tokens_per_segment),
-                       **kwargs)
-    return gr.update(value=output,visible=True)
+        print(f"Emo control mode:{emo_control_method},weight:{emo_weight},vec:{vec}")
+        output = tts.infer(spk_audio_prompt=prompt, text=text,
+                           output_path=output_path,
+                           emo_audio_prompt=emo_ref_path, emo_alpha=emo_weight,
+                           emo_vector=vec,
+                           use_emo_text=(emo_control_method==3), emo_text=emo_text,use_random=emo_random,
+                           verbose=cmd_args.verbose,
+                           max_text_tokens_per_segment=int(max_text_tokens_per_segment),
+                           **kwargs)
+        return gr.update(value=output,visible=True)
+    except Exception as e:
+        import traceback
+        error_msg = f"生成失败: {str(e)}\n{traceback.format_exc()}"
+        print(error_msg)
+        gr.Warning(f"生成失败: {str(e)}")
+        return gr.update(value=None,visible=False)
 
 def update_prompt_audio():
     update_button = gr.update(interactive=True)

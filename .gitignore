@@ -1,31 +1,49 @@
-# Development Tools.
-.mypy_cache/
-.ruff_cache/
+# Python
 __pycache__/
-.idea/
-.vscode/
-
-# Environments.
-.venv*/
-venv*/
-conda_env*/
-
-# Python Bytecode.
 *.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
 
-# Distribution/Packaging.
-/build/
-/dist/
-*.egg-info/
-.pypirc
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# Operating System Junk.
-*.DS_Store
+# OS
+.DS_Store
 Thumbs.db
-desktop.ini
 
-# IndexTTS.
-/cache/
-/checkpoints/*
-!/checkpoints/*.yaml
-/outputs/
+# Logs
+*.log
+logs/
+
+# Outputs
+outputs/
+prompts/
+*.wav
+*.mp3
+
+# Temp
+/tmp/
+*.tmp
+
+# Docker build context (large files)
+checkpoints/
+*.pth
+*.pt
+*.safetensors
+*.bin
+
+# Test results
+benchmark_*.csv
+/tmp/benchmark-*
+
+# Environment
+.env
+.env.local

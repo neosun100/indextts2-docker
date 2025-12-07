@@ -151,6 +151,36 @@ if response.status_code == 200:
         f.write(response.content)
 ```
 
+## 📁 音訊檔案管理
+
+### 檔案位置
+
+**範例音訊**（內建，唯讀）：
+- 路徑：`/app/examples/`
+- 檔案：`voice_01.wav` ~ `voice_12.wav`（12個說話人）、`emo_sad.wav`、`emo_hate.wav`（2個情感參考）
+- 用途：API呼叫的參考音訊
+
+**使用者上傳和生成的音訊**（映射到主機）：
+- 容器路徑：`/app/outputs/`
+- 主機路徑：`/tmp/indextts2-outputs/`
+- 容器刪除後檔案仍保留
+
+### 檔案命名規則
+
+**WebUI**（基於時間戳記）：
+```
+upload_spk_20251207_170623.wav  # 上傳的說話人音訊
+upload_emo_20251207_170623.wav  # 上傳的情感音訊
+tts_20251207_170623.wav         # 生成的音訊
+```
+格式：`年月日_時分秒` - 人類可讀，易於按時間排序
+
+**REST API**（基於UUID）：
+```
+tts_a1b2c3d4-e5f6-7890-abcd-ef1234567890.wav
+```
+格式：UUID v4 - 保證唯一性，適合高並發場景
+
 ## 📚 文件
 
 - **API 文件**: http://localhost:8002/docs/

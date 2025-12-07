@@ -147,6 +147,36 @@ if response.status_code == 200:
         f.write(response.content)
 ```
 
+## 📁 Audio File Management
+
+### File Locations
+
+**Example Audio** (Built-in, read-only):
+- Path: `/app/examples/`
+- Files: `voice_01.wav` ~ `voice_12.wav` (12 speakers), `emo_sad.wav`, `emo_hate.wav` (2 emotion references)
+- Usage: Reference audio for API calls
+
+**User Uploads & Generated Audio** (Mapped to host):
+- Container path: `/app/outputs/`
+- Host path: `/tmp/indextts2-outputs/`
+- Persists after container deletion
+
+### File Naming Convention
+
+**WebUI** (Timestamp-based):
+```
+upload_spk_20251207_170623.wav  # Uploaded speaker audio
+upload_emo_20251207_170623.wav  # Uploaded emotion audio
+tts_20251207_170623.wav         # Generated audio
+```
+Format: `YYYYMMDD_HHMMSS` - Human-readable, easy to sort by time
+
+**REST API** (UUID-based):
+```
+tts_a1b2c3d4-e5f6-7890-abcd-ef1234567890.wav
+```
+Format: UUID v4 - Guaranteed unique, suitable for high concurrency
+
 ## 📚 Documentation
 
 - **API Documentation**: http://localhost:8002/docs/

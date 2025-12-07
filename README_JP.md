@@ -33,6 +33,43 @@ NVIDIA L40S GPU で 80 テストケース（4バージョン × 4シナリオ ×
 - **英語コンテンツ**：`v2.0-production` を使用（最も安定）
 - **混合コンテンツ**：`v2.1-turbo` を使用（バランス型）
 
+## 🛠️ システム要件
+
+### ハードウェア要件
+- **GPU**: NVIDIA GPU、VRAM 8GB以上（L40Sでテスト済み）
+- **メモリ**: 16GB以上のシステムメモリを推奨
+
+### ソフトウェア前提条件
+
+**1. NVIDIA ドライバー**（必須）
+- 最小バージョン：525.60.13+
+- バージョン確認：`nvidia-smi`
+- ダウンロード：[NVIDIA ドライバーダウンロード](https://www.nvidia.com/download/index.aspx)
+
+**2. Docker**（必須）
+- 最小バージョン：20.10+
+- バージョン確認：`docker --version`
+- インストール：[Docker インストールガイド](https://docs.docker.com/engine/install/)
+
+**3. NVIDIA Container Toolkit**（必須）
+- Docker コンテナで GPU サポートを有効化
+- インストール方法：
+```bash
+# Ubuntu/Debian
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+```
+
+**4. GPU アクセスの確認**
+```bash
+docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
+```
+
+**注意**：ホストに CUDA Toolkit のインストールは**不要**です。Docker イメージに CUDA 12.1.0 が含まれています。
+
 ## 🚀 クイックスタート
 
 ### 方法1：Docker Run（推奨）
@@ -84,6 +121,8 @@ services:
     ports:
       - "8002:8002"
       - "7860:7860"
+    volumes:
+      - /tmp/indextts2-outputs:/app/outputs
     deploy:
       resources:
         reservations:

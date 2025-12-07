@@ -33,6 +33,43 @@
 - **英文内容**：使用 `v2.0-production`（最稳定）
 - **混合内容**：使用 `v2.1-turbo`（均衡）
 
+## 🛠️ 系统要求
+
+### 硬件要求
+- **GPU**: NVIDIA GPU，显存 8GB 以上（已在 L40S 上测试）
+- **内存**: 建议 16GB 以上系统内存
+
+### 软件前置条件
+
+**1. NVIDIA 驱动**（必需）
+- 最低版本：525.60.13+
+- 检查版本：`nvidia-smi`
+- 下载地址：[NVIDIA 驱动下载](https://www.nvidia.com/download/index.aspx)
+
+**2. Docker**（必需）
+- 最低版本：20.10+
+- 检查版本：`docker --version`
+- 安装指南：[Docker 安装文档](https://docs.docker.com/engine/install/)
+
+**3. NVIDIA Container Toolkit**（必需）
+- 用于在 Docker 容器中启用 GPU 支持
+- 安装方法：
+```bash
+# Ubuntu/Debian
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+```
+
+**4. 验证 GPU 访问**
+```bash
+docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
+```
+
+**注意**：宿主机**无需安装** CUDA Toolkit。Docker 镜像已包含 CUDA 12.1.0。
+
 ## 🚀 快速开始
 
 ### 方式一：Docker Run（推荐）
@@ -84,6 +121,8 @@ services:
     ports:
       - "8002:8002"
       - "7860:7860"
+    volumes:
+      - /tmp/indextts2-outputs:/app/outputs
     deploy:
       resources:
         reservations:

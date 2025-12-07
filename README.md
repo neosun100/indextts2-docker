@@ -33,6 +33,43 @@ Tested on NVIDIA L40S GPU with 80 test cases (4 versions × 4 scenarios × 5 run
 - **English content**: Use `v2.0-production` (most stable)
 - **Mixed content**: Use `v2.1-turbo` (balanced)
 
+## 🛠️ Requirements
+
+### Hardware Requirements
+- **GPU**: NVIDIA GPU with 8GB+ VRAM (tested on L40S)
+- **RAM**: 16GB+ system memory recommended
+
+### Software Prerequisites
+
+**1. NVIDIA Driver** (Required)
+- Minimum version: 525.60.13+
+- Check version: `nvidia-smi`
+- Download: [NVIDIA Driver Downloads](https://www.nvidia.com/download/index.aspx)
+
+**2. Docker** (Required)
+- Minimum version: 20.10+
+- Check version: `docker --version`
+- Install: [Docker Installation Guide](https://docs.docker.com/engine/install/)
+
+**3. NVIDIA Container Toolkit** (Required)
+- Enables GPU support in Docker containers
+- Install:
+```bash
+# Ubuntu/Debian
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+```
+
+**4. Verify GPU Access**
+```bash
+docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
+```
+
+**Note**: CUDA Toolkit installation on host is **NOT required**. The Docker image includes CUDA 12.1.0.
+
 ## 🚀 Quick Start
 
 ### Option 1: Docker Run (Recommended)
@@ -84,6 +121,8 @@ services:
     ports:
       - "8002:8002"
       - "7860:7860"
+    volumes:
+      - /tmp/indextts2-outputs:/app/outputs
     deploy:
       resources:
         reservations:
@@ -184,12 +223,6 @@ Format: UUID v4 - Guaranteed unique, suitable for high concurrency
 - **Gradio WebUI**: http://localhost:7860/
 - **Full Benchmark Report**: [BENCHMARK_FINAL_REPORT.md](BENCHMARK_FINAL_REPORT.md)
 - **API Guide**: [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
-
-## 🛠️ Requirements
-
-- Docker 20.10+
-- NVIDIA GPU with 8GB+ VRAM
-- NVIDIA Docker Runtime
 
 ## 📊 Emotion Vector Format
 

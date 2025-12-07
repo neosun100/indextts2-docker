@@ -1,0 +1,15 @@
+FROM neosun/indextts2:v2.1-cuda
+
+# 安装 huggingface-cli
+RUN uv pip install huggingface-hub
+
+# 下载日语模型（使用较小的 163000 版本）
+RUN cd /app/checkpoints && \
+    rm -f gpt.pth bpe.model && \
+    uv run python3 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Jmica/IndexTTS-2-Japanese', filename='model_jp_163000.pth', local_dir='.')" && \
+    mv model_jp_163000.pth gpt.pth && \
+    uv run python3 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Jmica/IndexTTS-2-Japanese', filename='japanese_bpe.model', local_dir='.')" && \
+    mv japanese_bpe.model bpe.model
+
+# 重新预加载
+RUN uv run python3 -c "from indextts.infer_v2 import IndexTTS2; IndexTTS2(cfg_path='checkpoints/config.yaml', model_dir='checkpoints', use_fp16=True, use_cuda_kernel=True)" || true

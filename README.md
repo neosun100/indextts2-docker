@@ -145,6 +145,68 @@ services:
 
 ## 🔌 API Usage
 
+### Available Endpoints
+
+**1. Standard TTS** - `/tts` (POST)
+```bash
+curl -X POST http://localhost:8002/tts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello, this is a test.",
+    "spk_audio_prompt": "/app/examples/voice_01.wav"
+  }' \
+  -o output.wav
+```
+
+**2. Cached TTS** - `/tts_cached` (POST)
+```bash
+# First, upload speaker audio
+curl -X POST http://localhost:8002/upload_speaker \
+  -F "audio=@my_voice.wav" \
+  -F "speaker_name=MyVoice"
+# Returns: {"speaker_id": "spk_abc123"}
+
+# Then use speaker_id for TTS
+curl -X POST http://localhost:8002/tts_cached \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello",
+    "speaker_id": "spk_abc123"
+  }' \
+  -o output.wav
+```
+
+**3. Upload Speaker** - `/upload_speaker` (POST)
+```bash
+curl -X POST http://localhost:8002/upload_speaker \
+  -F "audio=@voice.wav" \
+  -F "speaker_name=Speaker1"
+```
+
+**4. List Speakers** - `/speakers` (GET)
+```bash
+curl http://localhost:8002/speakers
+```
+
+### Performance Parameters
+
+All TTS endpoints support these optional parameters:
+- `num_beams` (default: 3): Beam search width
+- `do_sample` (default: true): Enable sampling
+- `top_k` (default: 30): Top-k sampling
+- `top_p` (default: 0.8): Nucleus sampling
+- `temperature` (default: 0.8): Sampling temperature
+- `max_mel_tokens` (default: 1500): Max output length
+
+**Recommended for speed**:
+```json
+{
+  "num_beams": 1,
+  "do_sample": false,
+  "top_k": 10
+}
+```
+
 ### REST API
 
 ```bash
@@ -218,29 +280,65 @@ Format: UUID v4 - Guaranteed unique, suitable for high concurrency
 
 ## 🚀 Performance Optimization
 
+### Enhanced API with Tunable Parameters
+
+This Docker image includes **performance optimization API** that allows dynamic parameter tuning:
+
+**Tunable Parameters**:
+- `num_beams`: Beam search width (default: 3, recommended: 1)
+- `do_sample`: Sampling vs greedy decoding (default: true, fast: false)
+- `top_k`: Sampling range (default: 30, recommended: 10)
+- `max_mel_tokens`: Max generation length (default: 1500)
+
+**Performance Gains** (tested on L40S GPU):
+- Baseline: 7.8s (default parameters)
+- Optimized: 5.7s (num_beams=1, do_sample=false, top_k=10)
+- **Improvement: 26.6% faster**
+
+**Usage Example**:
+```bash
+curl -X POST http://localhost:8002/tts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Hello world",
+    "spk_audio_prompt": "/app/examples/voice_01.wav",
+    "num_beams": 1,
+    "do_sample": false,
+    "top_k": 10
+  }' \
+  -o output.wav
+```
+
 ### Speaker Cache System
 
-IndexTTS2 includes built-in GPU memory caching for speaker embeddings:
+**Two-tier caching** for efficient speaker management:
 
-**Performance Improvement**:
-- **3.4% faster** when reusing the same speaker
-- First call: 5.436s (extract embedding)
-- Subsequent calls: 5.207s (use cache, saves 0.229s)
-- Tested with 5 speakers × 5 iterations (outliers removed)
+1. **GPU Memory Cache** (fastest): Automatic, ~13GB fixed allocation
+2. **Persistent Disk Cache**: Survives container restarts
 
-**GPU Memory (VRAM)**:
-- Fixed allocation: ~13GB regardless of speaker count
-- Single-slot cache: Only stores one speaker at a time
-- Auto-cleanup: Old embeddings are automatically overwritten
-- **No memory accumulation** - Safe for unlimited speakers
+**Cache API Workflow**:
+```bash
+# Step 1: Upload speaker audio once
+curl -X POST http://localhost:8002/upload_speaker \
+  -F "audio=@my_voice.wav" \
+  -F "speaker_name=MyVoice"
+# Returns: {"speaker_id": "spk_abc123", ...}
 
-**Memory Safety Guarantee**:
+# Step 2: Reuse speaker_id for unlimited generations
+curl -X POST http://localhost:8002/tts_cached \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Hello", "speaker_id": "spk_abc123"}' \
+  -o output.wav
+
+# List all cached speakers
+curl http://localhost:8002/speakers
 ```
-✅ GPU memory: Fixed ~13GB (never grows)
-✅ Supports unlimited speakers without VRAM bloat
-✅ Automatic cache management built-in
-✅ 3.4% performance boost for repeated speakers
-```
+
+**Benefits**:
+- No need to re-upload audio files
+- Faster subsequent calls (cache hit)
+- Persistent across container restarts
+- Supports unlimited speakers (fixed memory)
 
 ## 📚 Documentation
 

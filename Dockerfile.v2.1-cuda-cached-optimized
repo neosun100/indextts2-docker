@@ -1,0 +1,11 @@
+FROM neosun/indextts2:v2.1-cuda
+
+# 复制缓存管理模块
+COPY speaker_cache_manager.py /app/
+COPY api_server_cached_optimized.py /app/
+
+# 创建缓存目录
+RUN mkdir -p /app/outputs/speaker_cache
+
+# 使用优化版API服务器
+CMD ["bash", "-c", "uv run python3 api_server_cached_optimized.py & uv run webui_enhanced.py --server_name 0.0.0.0 --server_port 7870 --use_fp16"]

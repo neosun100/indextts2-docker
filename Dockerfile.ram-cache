@@ -1,0 +1,33 @@
+FROM neosun/indextts2:v2.1-cuda
+
+# 复制内存缓存相关文件
+COPY speaker_cache_ram.py /app/speaker_cache_ram.py
+COPY api_server_ram_cache.py /app/api_server_ram_cache.py
+COPY benchmark_cache_strategies.py /app/benchmark_cache_strategies.py
+
+# 创建启动脚本，同时运行两个API服务器
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting IndexTTS2 with Dual Cache Servers..."\n\
+echo ""\n\
+echo "📡 Port 8002: Disk Cache Server"\n\
+echo "📡 Port 8003: RAM Cache Server"\n\
+echo "📡 Port 7860: Gradio WebUI"\n\
+echo ""\n\
+\n\
+# 启动磁盘缓存服务器（端口8002）\n\
+cd /app && python3 api_server_cached.py &\n\
+\n\
+# 等待2秒\n\
+sleep 2\n\
+\n\
+# 启动内存缓存服务器（端口8003）\n\
+cd /app && python3 api_server_ram_cache.py &\n\
+\n\
+# 等待2秒\n\
+sleep 2\n\
+\n\
+# 启动Gradio WebUI（端口7860）\n\
+cd /app && python3 webui.py\n\
+' > /app/start_dual_cache.sh && chmod +x /app/start_dual_cache.sh
+
+CMD ["/app/start_dual_cache.sh"]

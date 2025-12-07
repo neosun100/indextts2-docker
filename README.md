@@ -134,14 +134,43 @@ services:
 
 ## 📋 Available Docker Images
 
-| Tag | Features | Startup Time | Use Case |
-|-----|----------|--------------|----------|
-| `v2.0-production` | Stable baseline | ~90s | Production, English |
-| `v2.1-cuda` | CUDA kernel optimization | ~180s | Chinese content |
-| `v2.1-deepspeed` | DeepSpeed acceleration | ~90s | Quick deployment |
-| `v2.1-turbo` | FP16 + CUDA kernel | ~180s | Mixed content |
-| `v2.1-cuda-vietnamese` | Vietnamese language | ~180s | Vietnamese TTS |
-| `v2.1-cuda-japanese` | Japanese language | ~180s | Japanese TTS |
+| Tag | Features | Performance | Startup | Use Case | Recommended |
+|-----|----------|-------------|---------|----------|-------------|
+| `v2.2-performance-optimized` ⭐ | **Enhanced API** + Tunable params + Speaker cache | **26.6% faster** | ~180s | **Production (Best)** | ✅ **YES** |
+| `latest` | Same as v2.2 | 26.6% faster | ~180s | Production | ✅ **YES** |
+| `v2.1-cuda` | CUDA kernel optimization | Baseline | ~180s | Chinese content | ⭐⭐⭐ |
+| `v2.0-production` | Stable baseline | Baseline | ~90s | English content | ⭐⭐⭐ |
+
+### 🏆 Recommended: v2.2-performance-optimized
+
+**Why v2.2?**
+- ✅ **26.6% faster** with tunable parameters
+- ✅ **Enhanced API** with 8 performance parameters
+- ✅ **Speaker cache** system (no re-upload needed)
+- ✅ **All features** from previous versions
+- ✅ **Production ready** and fully tested
+
+**Quick Start (Recommended)**:
+```bash
+docker pull neosun/indextts2:v2.2-performance-optimized
+
+docker run -d \
+  --name indextts2 \
+  --gpus all \
+  -p 0.0.0.0:8002:8002 \
+  -p 0.0.0.0:7860:7860 \
+  -v /tmp/indextts2-outputs:/app/outputs \
+  --restart unless-stopped \
+  neosun/indextts2:v2.2-performance-optimized
+
+# Wait 2-3 minutes for service to start
+# Access API: http://your-ip:8002/docs/
+# Access WebUI: http://your-ip:7860
+```
+
+**Port Explanation**:
+- **8002**: REST API endpoint (for programmatic access)
+- **7860**: Gradio WebUI (for browser-based interface)
 
 ## 🔌 API Usage
 

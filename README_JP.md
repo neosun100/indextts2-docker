@@ -38,7 +38,7 @@ NVIDIA L40S GPU で 80 テストケース（4バージョン × 4シナリオ ×
 ### 方法1：Docker Run（推奨）
 
 ```bash
-# イメージをプル
+# イメージをプル（中国語/英語）
 docker pull neosun/indextts2:v2.1-cuda
 
 # コンテナを実行
@@ -48,6 +48,22 @@ docker run -d \
   -p 8002:8002 \
   -p 7860:7860 \
   neosun/indextts2:v2.1-cuda
+
+# ベトナム語版
+docker run -d \
+  --name indextts2-vn \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-vietnamese
+
+# 日本語版
+docker run -d \
+  --name indextts2-jp \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-japanese
 
 # サービス起動まで 2-3 分待機
 # Gradio WebUI にアクセス: http://localhost:7860
@@ -78,6 +94,12 @@ services:
 
 | タグ | 特徴 | 起動時間 | 使用例 |
 |-----|------|---------|--------|
+| `v2.0-production` | 安定版ベースライン | ~90秒 | 本番環境、英語 |
+| `v2.1-cuda` | CUDA カーネル最適化 | ~180秒 | 中国語コンテンツ |
+| `v2.1-deepspeed` | DeepSpeed 高速化 | ~90秒 | 迅速なデプロイ |
+| `v2.1-turbo` | FP16 + CUDA カーネル | ~180秒 | 混合コンテンツ |
+| `v2.1-cuda-vietnamese` | ベトナム語版 | ~180秒 | ベトナム語 TTS |
+| `v2.1-cuda-japanese` | 日本語版 | ~180秒 | 日本語 TTS |
 | `v2.0-production` | 安定版ベースライン | ~90秒 | 本番環境、英語 |
 | `v2.1-cuda` | CUDA カーネル最適化 | ~180秒 | 中国語コンテンツ |
 | `v2.1-deepspeed` | DeepSpeed 高速化 | ~90秒 | 迅速なデプロイ |

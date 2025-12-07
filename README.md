@@ -38,7 +38,7 @@ Tested on NVIDIA L40S GPU with 80 test cases (4 versions × 4 scenarios × 5 run
 ### Option 1: Docker Run (Recommended)
 
 ```bash
-# Pull the image
+# Pull the image (Chinese/English)
 docker pull neosun/indextts2:v2.1-cuda
 
 # Run the container
@@ -48,6 +48,22 @@ docker run -d \
   -p 8002:8002 \
   -p 7860:7860 \
   neosun/indextts2:v2.1-cuda
+
+# For Vietnamese
+docker run -d \
+  --name indextts2-vn \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-vietnamese
+
+# For Japanese
+docker run -d \
+  --name indextts2-jp \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-japanese
 
 # Wait 2-3 minutes for service to start
 # Access Gradio WebUI: http://localhost:7860
@@ -82,6 +98,8 @@ services:
 | `v2.1-cuda` | CUDA kernel optimization | ~180s | Chinese content |
 | `v2.1-deepspeed` | DeepSpeed acceleration | ~90s | Quick deployment |
 | `v2.1-turbo` | FP16 + CUDA kernel | ~180s | Mixed content |
+| `v2.1-cuda-vietnamese` | Vietnamese language | ~180s | Vietnamese TTS |
+| `v2.1-cuda-japanese` | Japanese language | ~180s | Japanese TTS |
 
 ## 🔌 API Usage
 

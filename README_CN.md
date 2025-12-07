@@ -38,7 +38,7 @@
 ### 方式一：Docker Run（推荐）
 
 ```bash
-# 拉取镜像
+# 拉取镜像（中文/英文）
 docker pull neosun/indextts2:v2.1-cuda
 
 # 运行容器
@@ -48,6 +48,22 @@ docker run -d \
   -p 8002:8002 \
   -p 7860:7860 \
   neosun/indextts2:v2.1-cuda
+
+# 越南语版本
+docker run -d \
+  --name indextts2-vn \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-vietnamese
+
+# 日语版本
+docker run -d \
+  --name indextts2-jp \
+  --gpus all \
+  -p 8002:8002 \
+  -p 7860:7860 \
+  neosun/indextts2:v2.1-cuda-japanese
 
 # 等待 2-3 分钟服务启动
 # 访问 Gradio WebUI: http://localhost:7860
@@ -78,6 +94,12 @@ services:
 
 | 标签 | 特性 | 启动时间 | 使用场景 |
 |-----|------|---------|---------|
+| `v2.0-production` | 稳定基线版本 | ~90秒 | 生产环境、英文 |
+| `v2.1-cuda` | CUDA 内核优化 | ~180秒 | 中文内容 |
+| `v2.1-deepspeed` | DeepSpeed 加速 | ~90秒 | 快速部署 |
+| `v2.1-turbo` | FP16 + CUDA 内核 | ~180秒 | 混合内容 |
+| `v2.1-cuda-vietnamese` | 越南语版本 | ~180秒 | 越南语 TTS |
+| `v2.1-cuda-japanese` | 日语版本 | ~180秒 | 日语 TTS |
 | `v2.0-production` | 稳定基线版本 | ~90秒 | 生产环境、英文 |
 | `v2.1-cuda` | CUDA 内核优化 | ~180秒 | 中文内容 |
 | `v2.1-deepspeed` | DeepSpeed 加速 | ~90秒 | 快速部署 |
